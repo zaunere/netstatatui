@@ -1,0 +1,83 @@
+# Network Monitor TUI
+
+A real-time terminal user interface (TUI) application for monitoring network connections, similar to `netstat -alp` but with a modern, interactive interface.
+
+## Features
+
+- **Dual-panel layout**: 
+  - Top panel: Listening ports/services (shows only local addresses)
+  - Bottom panel: Active connections (shows local, remote addresses and states)
+- **Real-time updates**: Network connections are refreshed every second
+- **Color-coded states**: Different connection states are highlighted with colors
+  - Green: LISTEN (listening sockets)
+  - Cyan: ESTABLISHED (active connections)
+  - Yellow: TIME_WAIT (connections in time-wait state)
+  - Red: CLOSE_WAIT (connections waiting to close)
+- **Process information**: Shows PID and process name for each connection
+- **Clean interface**: Organized table layout with clear column headers
+
+## Usage
+
+### Running the Application
+
+```bash
+# Run in development mode
+cargo run
+
+# Or run the optimized release binary
+./target/release/netmon-tui
+```
+
+### Controls
+
+- **q** or **Esc**: Quit the application
+
+### Display Panels
+
+**Top Panel - Listening Ports:**
+1. **Proto**: Protocol type (TCP, TCP6, UDP, UDP6)
+2. **Local Address**: Local IP address and port
+3. **PID/Program**: Process ID and name using the port
+
+**Bottom Panel - Active Connections:**
+1. **Proto**: Protocol type (TCP, TCP6, UDP, UDP6)
+2. **Local Address**: Local IP address and port
+3. **Foreign Address**: Remote IP address and port
+4. **State**: Connection state (ESTABLISHED, TIME_WAIT, etc.)
+5. **PID/Program**: Process ID and name using the connection
+
+## Building
+
+### Prerequisites
+
+- Rust 1.70+ (installed via rustup)
+- Linux system (uses /proc/net/* files)
+
+### Build Commands
+
+```bash
+# Development build
+cargo build
+
+# Release build (optimized)
+cargo build --release
+```
+
+## Dependencies
+
+- **ratatui**: Terminal UI framework
+- **crossterm**: Cross-platform terminal manipulation
+- **tokio**: Async runtime for smooth updates
+- **anyhow**: Error handling
+
+## Technical Details
+
+The application parses network information directly from Linux's `/proc/net/` filesystem:
+- `/proc/net/tcp` and `/proc/net/tcp6` for TCP connections
+- `/proc/net/udp` and `/proc/net/udp6` for UDP sockets
+
+Process information is resolved by matching socket inodes from `/proc/[pid]/fd/` entries.
+
+## License
+
+This project is open source and available under standard Rust project licensing.
